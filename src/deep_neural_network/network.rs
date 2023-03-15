@@ -7,34 +7,31 @@ pub struct Network {
 
 impl Network {
 
-    pub fn new(layers_size: Vec<u16>, input: &Vec<f64>) -> Network {
-        let mut w: Vec<Vec<Vec<f64>>> = Vec::new();
-        let mut b: Vec<Vec<f64>> = Vec::new();
+    pub fn new() -> Network {
+        Network {
+            w: Vec::new(),
+            b: Vec::new()
+        }
+    }
 
+    pub fn init_layers(&mut self, layers_size: Vec<u16>, input: &Vec<f64>) {
+        self.add_layer(input.len() as u16, layers_size[0]);
+        for i in 1..layers_size.len() {
+            self.add_layer(layers_size[i - 1], layers_size[i]);
+        }
+    }
+
+    fn add_layer(&mut self, input: u16, neurons_count: u16) {
         let mut w_layer: Vec<Vec<f64>> = Vec::new();
         let mut b_layer: Vec<f64> = Vec::new();
-        for _ in 0..layers_size[0] {
-            w_layer.push(create_random_vector(input.len() as u16));
+
+        for _ in 0..neurons_count {
+            w_layer.push(create_random_vector(input));
             b_layer.push(generate_number())
         }
-        w.push(w_layer);
-        b.push(b_layer);
 
-        for i in 1..layers_size.len() {
-            let mut w_layer: Vec<Vec<f64>> = Vec::new();
-            let mut b_layer: Vec<f64> = Vec::new();
-            for _ in 0..layers_size[i] {
-                w_layer.push(create_random_vector(layers_size[i - 1]));
-                b_layer.push(generate_number())
-            }
-            w.push(w_layer);
-            b.push(b_layer);
-        }
-
-        Network {
-            w,
-            b
-        }
+        self.w.push(w_layer);
+        self.b.push(b_layer);
     }
 
 

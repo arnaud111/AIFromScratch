@@ -10,7 +10,8 @@ fn main() {
 
     let (x, y) = create_data();
 
-    
+    let mut network = Network::new();
+    network.init_layers(vec![2, 4, 1], &x[0]);
 
 }
 
