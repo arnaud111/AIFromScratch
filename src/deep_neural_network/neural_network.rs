@@ -60,7 +60,6 @@ impl Neuron {
             for i in 0..x.len() {
                 let (dw, db) = self.gradient(x[i], y[i]);
                 self.update(&dw, db, learning_rate);
-                println!("a: {}", self.accuracy(&x, &y));
             }
         }
     }

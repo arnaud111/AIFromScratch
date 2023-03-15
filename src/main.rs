@@ -12,7 +12,10 @@ fn main() {
 
     let mut neuron = Neuron::new(&x[0]);
     println!("w: {:?} | b: {}", neuron.w, neuron.b);
-    neuron.train(&x, &y, 0.0001, 1000);
+    neuron.train(&x, &y, 0.1, 100);
+    println!("a: {}", neuron.accuracy(&x, &y));
+    println!("w: {:?} | b: {}", neuron.w, neuron.b);
+
 }
 
 fn create_data() -> (Vec<&'static [f64]>, Vec<bool>) {
