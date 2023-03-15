@@ -1,33 +1,41 @@
-use crate::deep_neural_network::layer::Layer;
+use crate::{create_random_vector, generate_number};
 
 pub struct Network {
-    pub layers: Vec<Layer>
+    w: Vec<Vec<Vec<f64>>>,
+    b: Vec<Vec<f64>>
 }
 
 impl Network {
 
-    pub fn new(layers_size: Vec<u16>, input: &[f64]) -> Network {
-        let mut network = Network {
-            layers: vec![]
-        };
+    pub fn new(layers_size: Vec<u16>, input: &Vec<f64>) -> Network {
+        let mut w: Vec<Vec<Vec<f64>>> = Vec::new();
+        let mut b: Vec<Vec<f64>> = Vec::new();
 
-        network.layers.push(Layer::new(layers_size[0], input.len() as u16));
+        let mut w_layer: Vec<Vec<f64>> = Vec::new();
+        let mut b_layer: Vec<f64> = Vec::new();
+        for _ in 0..layers_size[0] {
+            w_layer.push(create_random_vector(input.len() as u16));
+            b_layer.push(generate_number())
+        }
+        w.push(w_layer);
+        b.push(b_layer);
+
         for i in 1..layers_size.len() {
-            network.layers.push(Layer::new(layers_size[i], layers_size[i - 1]));
+            let mut w_layer: Vec<Vec<f64>> = Vec::new();
+            let mut b_layer: Vec<f64> = Vec::new();
+            for _ in 0..layers_size[i] {
+                w_layer.push(create_random_vector(layers_size[i - 1]));
+                b_layer.push(generate_number())
+            }
+            w.push(w_layer);
+            b.push(b_layer);
         }
-        network.layers.push(Layer::new(1, layers_size[layers_size.len() - 1]));
 
-        network
+        Network {
+            w,
+            b
+        }
     }
 
-    pub fn get_probability(&self, x: Vec<f64>) -> f64 {
-        let mut y = x;
-        println!("y[0] = {:?}", y);
-        for i in 0..self.layers.len() {
-            y = self.layers[i].get_probability(&y);
-            println!("y[{}] = {:?}", i, y);
-        }
-        y[0]
-    }
 
 }
