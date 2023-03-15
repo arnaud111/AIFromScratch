@@ -1,5 +1,7 @@
-use crate::math::vector::create_random_vector;
-use crate::deep_neural_network::neural_network::{Neuron};
+use crate::deep_neural_network::network::Network;
+use crate::deep_neural_network::neuron::Neuron;
+use crate::deep_neural_network::layer::Layer;
+use crate::math::vector::{create_random_vector, generate_number};
 
 mod deep_neural_network;
 mod math;
@@ -10,11 +12,8 @@ fn main() {
 
     let (x, y) = create_data();
 
-    let mut neuron = Neuron::new(&x[0]);
-    println!("w: {:?} | b: {}", neuron.w, neuron.b);
-    neuron.train(&x, &y, 0.1, 100);
-    println!("a: {}", neuron.accuracy(&x, &y));
-    println!("w: {:?} | b: {}", neuron.w, neuron.b);
+    let mut network = Network::new(vec![3, 4, 3], &x[0]);
+    println!("Probability: {}", network.get_probability(x[0].to_vec()));
 
 }
 

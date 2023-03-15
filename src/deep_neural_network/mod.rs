@@ -1,1 +1,3 @@
-pub(crate) mod neural_network;
+pub mod network;
+pub mod neuron;
+pub mod layer;
