@@ -37,15 +37,35 @@ impl Network {
     pub fn forward_propagation(&self, input: &Vector) -> Vec<Vector> {
         let mut a: Vec<Vector> = Vec::new();
         a.push((*input).clone());
-        a[0].display();
 
         for i in 0..self.w.len() {
             let z = self.w[i].dot(&a[i]).add(&self.b[i]);
             a.push(z.sigmoid());
-            a[i + 1].display();
         }
 
         a
+    }
+
+    pub fn back_propagation(&self, y: Vector, activations: Vec<Vector>) -> (Vec<Vector>, Vec<Vector>) {
+        let mut dw: Vec<Vector> = Vec::new();
+        let mut db: Vec<Vector> = Vec::new();
+        let m = y.shape.1 as f64;
+
+        let mut dz = activations[activations.len() - 1].sub(&y);
+
+        for i in (0..self.w.len()).rev() {
+            let dw_layer = dz.dot(&activations[i].transpose()).div_by_number(m);
+            let db_layer = dz.sum().div_by_number(m);
+
+            if i > 0 {
+                dz = self.w[i].transpose().dot(&dz).multiply_one_by_one(&activations[i]).multiply_one_by_one(&activations[i].number_sub(1.0));
+            }
+
+            dw.push(dw_layer);
+            db.push(db_layer);
+        }
+
+        (dw, db)
     }
 
     pub fn display_layers(&self) {

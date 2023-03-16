@@ -89,6 +89,72 @@ impl Vector {
         Vector::new(result)
     }
 
+    pub fn sub(&self, other: &Vector) -> Vector {
+        let mut result: Vec<Vec<f64>> = Vec::new();
+        for i in 0..self.shape.0 {
+            let mut row: Vec<f64> = Vec::new();
+            for j in 0..self.shape.1 {
+                if other.shape.1 == 1 {
+                    row.push(self.data[i][j] - other.data[i][0])
+                } else {
+                    row.push(self.data[i][j] - other.data[i][j]);
+                }
+            }
+            result.push(row);
+        }
+        Vector::new(result)
+    }
+
+    pub fn number_sub(&self, n: f64) -> Vector {
+        let mut result: Vec<Vec<f64>> = Vec::new();
+        for i in 0..self.shape.0 {
+            let mut row: Vec<f64> = Vec::new();
+            for j in 0..self.shape.1 {
+                row.push(n - self.data[i][j]);
+            }
+            result.push(row);
+        }
+        Vector::new(result)
+    }
+
+    pub fn div_by_number(&self, n: f64) -> Vector {
+        let mut result: Vec<Vec<f64>> = Vec::new();
+        for i in 0..self.shape.0 {
+            let mut row: Vec<f64> = Vec::new();
+            for j in 0..self.shape.1 {
+                row.push(self.data[i][j] / n);
+            }
+            result.push(row);
+        }
+        Vector::new(result)
+    }
+
+    pub fn sum(&self) -> Vector {
+        let mut result: Vec<Vec<f64>> = Vec::new();
+        for i in 0..self.shape.0 {
+            let mut row: Vec<f64> = Vec::new();
+            let mut sum = 0.0;
+            for j in 0..self.shape.1 {
+                sum += self.data[i][j];
+            }
+            row.push(sum);
+            result.push(row);
+        }
+        Vector::new(result)
+    }
+
+    pub fn multiply_one_by_one(&self, other: &Vector) -> Vector {
+        let mut result: Vec<Vec<f64>> = Vec::new();
+        for i in 0..self.shape.0 {
+            let mut row: Vec<f64> = Vec::new();
+            for j in 0..self.shape.1 {
+                row.push(self.data[i][j] * other.data[i][j]);
+            }
+            result.push(row);
+        }
+        Vector::new(result)
+    }
+
     pub fn sigmoid(&self) -> Vector {
         let mut result: Vec<Vec<f64>> = Vec::new();
         for i in 0..self.shape.0 {
