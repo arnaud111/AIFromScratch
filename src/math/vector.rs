@@ -180,6 +180,30 @@ impl Vector {
         Vector::new(result)
     }
 
+    pub fn tanh(&self) -> Vector {
+        let mut result: Vec<Vec<f64>> = Vec::new();
+        for i in 0..self.shape.0 {
+            let mut row: Vec<f64> = Vec::new();
+            for j in 0..self.shape.1 {
+                row.push((self.data[i][j].exp() - (-self.data[i][j]).exp()) / (self.data[i][j].exp() + (-self.data[i][j]).exp()));
+            }
+            result.push(row);
+        }
+        Vector::new(result)
+    }
+
+    pub fn relu(&self) -> Vector {
+        let mut result: Vec<Vec<f64>> = Vec::new();
+        for i in 0..self.shape.0 {
+            let mut row: Vec<f64> = Vec::new();
+            for j in 0..self.shape.1 {
+                row.push(self.data[i][j].max(0.0));
+            }
+            result.push(row);
+        }
+        Vector::new(result)
+    }
+
     pub fn get_column(&self, index: usize) -> Vector {
         let mut result: Vec<Vec<f64>> = Vec::new();
         for i in 0..self.shape.0 {
@@ -203,8 +227,8 @@ impl ActivationEnum {
     pub fn compute(&self, vec: Vector) -> Vector {
         return match self {
             ActivationEnum::Sigmoid => vec.sigmoid(),
-            ActivationEnum::Relu => vec.sigmoid(),
-            ActivationEnum::Tanh => vec.sigmoid()
+            ActivationEnum::Relu => vec.relu(),
+            ActivationEnum::Tanh => vec.tanh()
         }
     }
 }
