@@ -14,8 +14,8 @@ impl Network {
         }
     }
 
-    pub fn init_layers(&mut self, layers_size: Vec<u16>, input: &Vec<f64>) {
-        self.add_layer(input.len() as u16, layers_size[0]);
+    pub fn init_layers(&mut self, layers_size: Vec<u16>, input: u16) {
+        self.add_layer(input, layers_size[0]);
         for i in 1..layers_size.len() {
             self.add_layer(layers_size[i - 1], layers_size[i]);
         }
@@ -32,6 +32,20 @@ impl Network {
 
         self.w.push(Vector::new(w_layer));
         self.b.push(Vector::new(b_layer));
+    }
+
+    pub fn forward_propagation(&self, input: &Vector) -> Vec<Vector> {
+        let mut a: Vec<Vector> = Vec::new();
+        a.push((*input).clone());
+        a[0].display();
+
+        for i in 0..self.w.len() {
+            let z = self.w[i].dot(&a[i]).add(&self.b[i]);
+            a.push(z.sigmoid());
+            a[i + 1].display();
+        }
+
+        a
     }
 
     pub fn display_layers(&self) {
