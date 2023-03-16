@@ -34,5 +34,14 @@ impl Network {
         self.b.push(b_layer);
     }
 
-
+    pub fn display_layers(&self) {
+        for i in 0..self.w.len() {
+            println!("Layer {}", i);
+            for j in 0..self.w[i].len() {
+                println!(" - Neuron {}", j);
+                println!("    - Weights: {:?}", self.w[i][j]);
+                println!("    - Bias: {}", self.b[i][j]);
+            }
+        }
+    }
 }

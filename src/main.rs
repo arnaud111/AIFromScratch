@@ -12,7 +12,7 @@ fn main() {
 
     let mut network = Network::new();
     network.init_layers(vec![2, 4, 1], &x[0]);
-
+    network.display_layers();
 }
 
 fn create_data() -> (Vec<Vec<f64>>, Vec<bool>) {
