@@ -86,6 +86,33 @@ impl Network {
         }
     }
 
+    pub fn probability(&self, input: &Vector) -> Vector {
+        let mut a: Vector = (*input).clone();
+
+        for i in 0..self.w.len() {
+            let z = self.w[i].dot(&a).add(&self.b[i]);
+            a = z.sigmoid();
+        }
+
+        a
+    }
+
+    pub fn predict(&self, input: &Vector) -> bool {
+        return self.probability(input).data[0][0] > 0.5;
+    }
+
+    pub fn accuracy(&self, x: &Vector, y: &Vector) -> f64 {
+        let mut correct = 0;
+
+        for i in 0..x.shape.1 {
+            if self.predict(&x.get_column(i)) == (y.data[0][i] > 0.5) {
+                correct += 1;
+            }
+        }
+
+        correct as f64 / y.shape.1 as f64
+    }
+
     pub fn display_layers(&self) {
         for i in 0..self.w.len() {
             println!("Layer {}", i);

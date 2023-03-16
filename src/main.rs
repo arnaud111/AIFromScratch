@@ -13,8 +13,10 @@ fn main() {
     let mut network = Network::new();
     network.init_layers(vec![3, 4, 1], x.shape.0 as u16);
     network.display_layers();
-    network.train(&x, &y, 100000, 0.1);
+    println!("Accuracy : {}", network.accuracy(&x, &y));
+    network.train(&x, &y, 10000, 0.1);
     network.display_layers();
+    println!("Accuracy : {}", network.accuracy(&x, &y));
 }
 
 fn create_data() -> (Vector, Vector) {

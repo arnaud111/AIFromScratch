@@ -178,4 +178,14 @@ impl Vector {
         }
         Vector::new(result)
     }
+
+    pub fn get_column(&self, index: usize) -> Vector {
+        let mut result: Vec<Vec<f64>> = Vec::new();
+        for i in 0..self.shape.0 {
+            let mut row: Vec<f64> = Vec::new();
+            row.push(self.data[i][index]);
+            result.push(row);
+        }
+        Vector::new(result)
+    }
 }
