@@ -216,6 +216,18 @@ impl Vector {
         Vector::new(result)
     }
 
+    pub fn switch(&self) -> Vector {
+        let mut result: Vec<Vec<f64>> = Vec::new();
+        for i in 0..self.shape.0 {
+            let mut row: Vec<f64> = Vec::new();
+            for j in 0..self.shape.1 {
+                row.push(self.data[i][j] * 1.0 / (1.0 + (-self.data[i][j]).exp()));
+            }
+            result.push(row);
+        }
+        Vector::new(result)
+    }
+
     pub fn get_column(&self, index: usize) -> Vector {
         let mut result: Vec<Vec<f64>> = Vec::new();
         for i in 0..self.shape.0 {
@@ -232,7 +244,8 @@ pub enum ActivationEnum {
     Sigmoid,
     Relu,
     Tanh,
-    LeakyRelu
+    LeakyRelu,
+    Switch
 }
 
 impl ActivationEnum {
@@ -242,7 +255,8 @@ impl ActivationEnum {
             ActivationEnum::Sigmoid => vec.sigmoid(),
             ActivationEnum::Relu => vec.relu(),
             ActivationEnum::Tanh => vec.tanh(),
-            ActivationEnum::LeakyRelu => vec.leaky_relu()
+            ActivationEnum::LeakyRelu => vec.leaky_relu(),
+            ActivationEnum::Switch => vec.switch()
         }
     }
 }
