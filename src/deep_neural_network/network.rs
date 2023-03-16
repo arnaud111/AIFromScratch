@@ -4,48 +4,34 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 use std::fs::File;
 use std::io::{Read, Write};
+use crate::deep_neural_network::layer::Layer;
 
 #[derive(Serialize, Deserialize)]
 pub struct Network {
-    w: Vec<Vector>,
-    b: Vec<Vector>
+    layers: Vec<Layer>
 }
 
 impl Network {
 
     pub fn new() -> Network {
         Network {
-            w: Vec::new(),
-            b: Vec::new()
+            layers: Vec::new()
         }
     }
 
-    pub fn init_layers(&mut self, layers_size: Vec<u16>, input: u16) {
-        self.add_layer(input, layers_size[0]);
-        for i in 1..layers_size.len() {
-            self.add_layer(layers_size[i - 1], layers_size[i]);
+    pub fn init_layers(&mut self, layers: Vec<(u16, ActivationEnum)>, input: u16) {
+        self.layers.push(Layer::new(&input, &layers[0].0, &layers[0].1));
+        for i in 1..layers.len() {
+            self.layers.push(Layer::new(&layers[i - 1].0, &layers[i].0, &layers[i].1));
         }
-    }
-
-    fn add_layer(&mut self, input: u16, neurons_count: u16) {
-        let mut w_layer: Vec<Vec<f64>> = Vec::new();
-        let mut b_layer: Vec<Vec<f64>> = Vec::new();
-
-        for _ in 0..neurons_count {
-            w_layer.push(create_random_vector(input));
-            b_layer.push(create_random_vector(1))
-        }
-
-        self.w.push(Vector::new(w_layer));
-        self.b.push(Vector::new(b_layer));
     }
 
     fn forward_propagation(&self, input: &Vector) -> Vec<Vector> {
         let mut a: Vec<Vector> = Vec::new();
         a.push((*input).clone());
 
-        for i in 0..self.w.len() {
-            let z = self.w[i].dot(&a[i]).add(&self.b[i]);
+        for i in 0..self.layers.len() {
+            let z = self.layers[i].w.dot(&a[i]).add(&self.layers[i].b);
             a.push(z.sigmoid());
         }
 
@@ -59,12 +45,12 @@ impl Network {
 
         let mut dz = activations[activations.len() - 1].sub(&y);
 
-        for i in (0..self.w.len()).rev() {
+        for i in (0..self.layers.len()).rev() {
             let dw_layer = dz.dot(&activations[i].transpose()).div_by_number(m);
             let db_layer = dz.sum().div_by_number(m);
 
             if i > 0 {
-                dz = self.w[i].transpose().dot(&dz).multiply_one_by_one(&activations[i]).multiply_one_by_one(&activations[i].number_sub(1.0));
+                dz = self.layers[i].w.transpose().dot(&dz).multiply_one_by_one(&activations[i]).multiply_one_by_one(&activations[i].number_sub(1.0));
             }
 
             dw.push(dw_layer);
@@ -78,9 +64,9 @@ impl Network {
     }
 
     fn update(&mut self, dw: Vec<Vector>, db: Vec<Vector>, learning_rate: f64) {
-        for i in 0..self.w.len() {
-            self.w[i] = self.w[i].sub(&dw[i].mul_by_number(learning_rate));
-            self.b[i] = self.b[i].sub(&db[i].mul_by_number(learning_rate));
+        for i in 0..self.layers.len() {
+            self.layers[i].w = self.layers[i].w.sub(&dw[i].mul_by_number(learning_rate));
+            self.layers[i].b = self.layers[i].b.sub(&db[i].mul_by_number(learning_rate));
         }
     }
 
@@ -110,8 +96,8 @@ impl Network {
     pub fn probability(&self, input: &Vector) -> Vector {
         let mut a: Vector = (*input).clone();
 
-        for i in 0..self.w.len() {
-            let z = self.w[i].dot(&a).add(&self.b[i]);
+        for i in 0..self.layers.len() {
+            let z = self.layers[i].w.dot(&a).add(&self.layers[i].b);
             a = z.sigmoid();
         }
 
@@ -135,10 +121,10 @@ impl Network {
     }
 
     pub fn display_layers(&self) {
-        for i in 0..self.w.len() {
+        for i in 0..self.layers.len() {
             println!("Layer {}", i);
-            self.w[i].display();
-            self.b[i].display();
+            self.layers[i].w.display();
+            self.layers[i].b.display();
         }
         println!();
     }

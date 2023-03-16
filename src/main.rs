@@ -7,7 +7,7 @@ mod math;
 
 
 fn main() {
-    load_network();
+    create_network();
 }
 
 fn load_network() {
@@ -19,7 +19,7 @@ fn load_network() {
 fn create_network() {
     let (x, y) = create_data();
     let mut network = Network::new();
-    network.init_layers(vec![128, 128, 128, 128, 128, 1], x.shape.0 as u16);
+    network.init_layers(vec![(128, ActivationEnum::Sigmoid), (128, ActivationEnum::Sigmoid), (128, ActivationEnum::Sigmoid), (128, ActivationEnum::Sigmoid), (128, ActivationEnum::Sigmoid), (1, ActivationEnum::Sigmoid)], x.shape.0 as u16);
     println!("Accuracy : {}", network.accuracy(&x, &y));
     network.train(&x, &y, 100, 0.1, true);
     println!("Accuracy : {}", network.accuracy(&x, &y));
