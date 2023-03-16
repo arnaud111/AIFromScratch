@@ -1,4 +1,4 @@
-use crate::{*};
+use crate::math::vector::{*};
 
 pub struct Network {
     w: Vec<Vec<Vec<f64>>>,
