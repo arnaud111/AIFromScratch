@@ -15,7 +15,7 @@ fn main() {
     network.display_layers();
 }
 
-fn create_data() -> (Vec<Vec<f64>>, Vec<bool>) {
+fn create_data() -> (Vec<Vec<f64>>, Vec<f64>) {
     let x = vec![vec![ 4.21850347,  2.23419161], vec![ 0.90779887,  0.45984362],
                  vec![-0.27652528,  5.08127768], vec![ 0.08848433,  2.32299086], vec![ 3.24329731,  1.21460627],
                  vec![ 1.44193252,  2.76754364], vec![ 1.0220286 ,  4.11660348], vec![ 3.97820955,  2.37817845],
@@ -50,12 +50,12 @@ fn create_data() -> (Vec<Vec<f64>>, Vec<bool>) {
                  vec![ 1.1424453 ,  2.01467995], vec![ 1.05505217, -0.64710744], vec![ 2.47034915,  4.09862906],
                  vec![-1.57671974,  4.95740592], vec![ 1.41164912, -1.32573949], vec![ 3.00468833,  0.9852149 ],
                  vec![-0.63762777,  4.09104705], vec![ 0.829832,    1.74202664]];
-    let y = vec![true, true, false, false, true, false, false, true, false, true, false, true, false, false,
-                 true, true, true, false, true, true, false, false, true, false, true, false, true, false, false, true,
-                 true, false, true, true, true, false, true, true, false, true, false, false, false, false, true, true,
-                 true, true, false, false, true, true, false, false, false, false, false, true, true, true, true, false,
-                 false, true, false, true, false, false, true, false, false, true, true, false, false, false, true, true,
-                 false, false, true, false, false, false, false, false, true, false, true, true, true, true, true, true,
-                 false, false, true, true, false, true];
+    let y = vec![1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0,
+                 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+                 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0,
+                 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+                 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0,
+                 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+                 0.0, 0.0, 1.0, 1.0, 0.0, 1.0];
     (x, y)
 }

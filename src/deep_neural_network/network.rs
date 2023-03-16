@@ -1,8 +1,8 @@
 use crate::math::vector::{*};
 
 pub struct Network {
-    w: Vec<Vec<Vec<f64>>>,
-    b: Vec<Vec<f64>>
+    w: Vec<Vector>,
+    b: Vec<Vector>
 }
 
 impl Network {
@@ -23,25 +23,24 @@ impl Network {
 
     fn add_layer(&mut self, input: u16, neurons_count: u16) {
         let mut w_layer: Vec<Vec<f64>> = Vec::new();
-        let mut b_layer: Vec<f64> = Vec::new();
+        let mut b_layer: Vec<Vec<f64>> = Vec::new();
 
         for _ in 0..neurons_count {
             w_layer.push(create_random_vector(input));
-            b_layer.push(generate_number())
+            b_layer.push(create_random_vector(1))
         }
 
-        self.w.push(w_layer);
-        self.b.push(b_layer);
+        self.w.push(Vector::new(w_layer));
+        self.b.push(Vector::new(b_layer));
     }
 
     pub fn display_layers(&self) {
         for i in 0..self.w.len() {
             println!("Layer {}", i);
-            for j in 0..self.w[i].len() {
-                println!(" - Neuron {}", j);
-                println!("    - Weights: {:?}", self.w[i][j]);
-                println!("    - Bias: {}", self.b[i][j]);
-            }
+            println!("{:?}", self.w[i].shape());
+            println!("{:?}", self.w[i].display());
+            println!("{:?}", self.b[i].shape());
+            println!("{:?}", self.b[i].display());
         }
     }
 }
