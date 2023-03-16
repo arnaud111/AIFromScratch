@@ -129,6 +129,18 @@ impl Vector {
         Vector::new(result)
     }
 
+    pub fn mul_by_number(&self, n: f64) -> Vector {
+        let mut result: Vec<Vec<f64>> = Vec::new();
+        for i in 0..self.shape.0 {
+            let mut row: Vec<f64> = Vec::new();
+            for j in 0..self.shape.1 {
+                row.push(self.data[i][j] * n);
+            }
+            result.push(row);
+        }
+        Vector::new(result)
+    }
+
     pub fn sum(&self) -> Vector {
         let mut result: Vec<Vec<f64>> = Vec::new();
         for i in 0..self.shape.0 {

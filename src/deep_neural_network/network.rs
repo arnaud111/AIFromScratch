@@ -65,7 +65,17 @@ impl Network {
             db.push(db_layer);
         }
 
+        dw.reverse();
+        db.reverse();
+
         (dw, db)
+    }
+
+    pub fn update(&mut self, dw: Vec<Vector>, db: Vec<Vector>, learning_rate: f64) {
+        for i in 0..self.w.len() {
+            self.w[i] = self.w[i].sub(&dw[i].mul_by_number(learning_rate));
+            self.b[i] = self.b[i].sub(&db[i].mul_by_number(learning_rate));
+        }
     }
 
     pub fn display_layers(&self) {
@@ -74,5 +84,6 @@ impl Network {
             self.w[i].display();
             self.b[i].display();
         }
+        println!();
     }
 }
