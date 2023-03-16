@@ -1,5 +1,5 @@
 use crate::deep_neural_network::network::Network;
-use crate::math::vector::{create_random_vector, generate_number};
+use crate::math::vector::{create_random_vector, generate_number, dot, transpose};
 
 mod deep_neural_network;
 mod math;
@@ -13,6 +13,9 @@ fn main() {
     let mut network = Network::new();
     network.init_layers(vec![2, 4, 1], &x[0]);
     network.display_layers();
+    println!("{}", network.accuracy(&x, &y));
+    network.train(&x, &y, 1000, 0.01);
+    println!("{}", network.accuracy(&x, &y));
 }
 
 fn create_data() -> (Vec<Vec<f64>>, Vec<bool>) {

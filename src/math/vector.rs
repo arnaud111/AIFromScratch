@@ -20,3 +20,23 @@ pub fn generate_number() -> f64 {
     let num = distribution.sample(&mut rng);
     num
 }
+
+pub fn dot(a: &Vec<f64>, b: &Vec<f64>) -> f64 {
+    let mut sum = 0.0;
+    for i in 0..a.len() {
+        sum += a[i] * b[i];
+    }
+    sum
+}
+
+pub fn transpose(a: &Vec<Vec<f64>>) -> Vec<Vec<f64>> {
+    let mut b: Vec<Vec<f64>> = Vec::new();
+    for i in 0..a[0].len() {
+        let mut row: Vec<f64> = Vec::new();
+        for j in 0..a.len() {
+            row.push(a[j][i]);
+        }
+        b.push(row);
+    }
+    b
+}
