@@ -204,6 +204,18 @@ impl Vector {
         Vector::new(result)
     }
 
+    pub fn leaky_relu(&self) -> Vector {
+        let mut result: Vec<Vec<f64>> = Vec::new();
+        for i in 0..self.shape.0 {
+            let mut row: Vec<f64> = Vec::new();
+            for j in 0..self.shape.1 {
+                row.push(self.data[i][j].max(0.1 * self.data[i][j]));
+            }
+            result.push(row);
+        }
+        Vector::new(result)
+    }
+
     pub fn get_column(&self, index: usize) -> Vector {
         let mut result: Vec<Vec<f64>> = Vec::new();
         for i in 0..self.shape.0 {
@@ -219,7 +231,8 @@ impl Vector {
 pub enum ActivationEnum {
     Sigmoid,
     Relu,
-    Tanh
+    Tanh,
+    LeakyRelu
 }
 
 impl ActivationEnum {
@@ -228,7 +241,8 @@ impl ActivationEnum {
         return match self {
             ActivationEnum::Sigmoid => vec.sigmoid(),
             ActivationEnum::Relu => vec.relu(),
-            ActivationEnum::Tanh => vec.tanh()
+            ActivationEnum::Tanh => vec.tanh(),
+            ActivationEnum::LeakyRelu => vec.leaky_relu()
         }
     }
 }
