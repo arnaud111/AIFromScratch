@@ -13,9 +13,7 @@ fn main() {
     let mut network = Network::new();
     network.init_layers(vec![3, 4, 1], x.shape.0 as u16);
     network.display_layers();
-    let activation = network.forward_propagation(&x);
-    let (dw, db) = network.back_propagation(y, activation);
-    network.update(dw, db, 0.01);
+    network.train(&x, &y, 100000, 0.1);
     network.display_layers();
 }
 

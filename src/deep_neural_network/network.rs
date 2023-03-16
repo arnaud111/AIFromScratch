@@ -34,7 +34,7 @@ impl Network {
         self.b.push(Vector::new(b_layer));
     }
 
-    pub fn forward_propagation(&self, input: &Vector) -> Vec<Vector> {
+    fn forward_propagation(&self, input: &Vector) -> Vec<Vector> {
         let mut a: Vec<Vector> = Vec::new();
         a.push((*input).clone());
 
@@ -46,7 +46,7 @@ impl Network {
         a
     }
 
-    pub fn back_propagation(&self, y: Vector, activations: Vec<Vector>) -> (Vec<Vector>, Vec<Vector>) {
+    fn back_propagation(&self, y: &Vector, activations: Vec<Vector>) -> (Vec<Vector>, Vec<Vector>) {
         let mut dw: Vec<Vector> = Vec::new();
         let mut db: Vec<Vector> = Vec::new();
         let m = y.shape.1 as f64;
@@ -71,10 +71,18 @@ impl Network {
         (dw, db)
     }
 
-    pub fn update(&mut self, dw: Vec<Vector>, db: Vec<Vector>, learning_rate: f64) {
+    fn update(&mut self, dw: Vec<Vector>, db: Vec<Vector>, learning_rate: f64) {
         for i in 0..self.w.len() {
             self.w[i] = self.w[i].sub(&dw[i].mul_by_number(learning_rate));
             self.b[i] = self.b[i].sub(&db[i].mul_by_number(learning_rate));
+        }
+    }
+
+    pub fn train(&mut self, x: &Vector, y: &Vector, epochs: usize, learning_rate: f64) {
+        for _ in 0..epochs {
+            let activations = self.forward_propagation(x);
+            let (dw, db) = self.back_propagation(y, activations);
+            self.update(dw, db, learning_rate);
         }
     }
 
