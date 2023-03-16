@@ -32,7 +32,7 @@ impl Network {
 
         for i in 0..self.layers.len() {
             let z = self.layers[i].w.dot(&a[i]).add(&self.layers[i].b);
-            a.push(z.sigmoid());
+            a.push(self.layers[i].activation.compute(z));
         }
 
         a
@@ -98,7 +98,7 @@ impl Network {
 
         for i in 0..self.layers.len() {
             let z = self.layers[i].w.dot(&a).add(&self.layers[i].b);
-            a = z.sigmoid();
+            a = self.layers[i].activation.compute(z);
         }
 
         a

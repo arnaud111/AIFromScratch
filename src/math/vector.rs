@@ -197,3 +197,14 @@ pub enum ActivationEnum {
     Relu,
     Tanh
 }
+
+impl ActivationEnum {
+
+    pub fn compute(&self, vec: Vector) -> Vector {
+        return match self {
+            ActivationEnum::Sigmoid => vec.sigmoid(),
+            ActivationEnum::Relu => vec.sigmoid(),
+            ActivationEnum::Tanh => vec.sigmoid()
+        }
+    }
+}

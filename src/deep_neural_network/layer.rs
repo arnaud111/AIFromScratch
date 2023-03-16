@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 pub struct Layer {
     pub w: Vector,
     pub b: Vector,
-    activation: ActivationEnum
+    pub activation: ActivationEnum
 }
 
 impl Layer {
