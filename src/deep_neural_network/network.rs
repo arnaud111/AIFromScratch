@@ -1,5 +1,11 @@
+use std::fmt::format;
 use crate::math::vector::{*};
+use serde::{Deserialize, Serialize};
+use serde_json;
+use std::fs::File;
+use std::io::Write;
 
+#[derive(Serialize, Deserialize)]
 pub struct Network {
     w: Vec<Vector>,
     b: Vec<Vector>
@@ -135,5 +141,11 @@ impl Network {
             self.b[i].display();
         }
         println!();
+    }
+
+    pub fn save(&self, file_name: &str) {
+        let mut file = File::create(format!("networks/{}.json", file_name)).unwrap();
+        let serialized = serde_json::to_string(self).unwrap();
+        file.write_all(serialized.as_bytes()).unwrap();
     }
 }

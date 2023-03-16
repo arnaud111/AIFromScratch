@@ -1,5 +1,6 @@
 use rand::Rng;
 use rand_distr::{Distribution, Normal};
+use serde::{Deserialize, Serialize};
 
 pub fn create_random_vector(size: u16) -> Vec<f64> {
     let mut rng = rand::thread_rng();
@@ -21,7 +22,7 @@ pub fn generate_number() -> f64 {
     num
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Vector {
     pub data: Vec<Vec<f64>>,
     pub shape: (usize, usize)
