@@ -41,6 +41,6 @@ impl Vector {
     }
 
     pub fn display(&self) {
-        println!("{:?}", self.data);
+        println!("{:?} : {:?}", self.shape, self.data);
     }
 }

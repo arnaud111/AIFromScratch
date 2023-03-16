@@ -37,10 +37,8 @@ impl Network {
     pub fn display_layers(&self) {
         for i in 0..self.w.len() {
             println!("Layer {}", i);
-            println!("{:?}", self.w[i].shape());
-            println!("{:?}", self.w[i].display());
-            println!("{:?}", self.b[i].shape());
-            println!("{:?}", self.b[i].display());
+            self.w[i].display();
+            self.b[i].display();
         }
     }
 }
