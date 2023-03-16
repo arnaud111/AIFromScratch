@@ -7,9 +7,17 @@ mod math;
 
 
 fn main() {
+    load_network();
+}
 
+fn load_network() {
     let (x, y) = create_data();
+    let mut network = Network::load("network");
+    println!("Accuracy : {}", network.accuracy(&x, &y));
+}
 
+fn create_network() {
+    let (x, y) = create_data();
     let mut network = Network::new();
     network.init_layers(vec![128, 128, 128, 128, 128, 1], x.shape.0 as u16);
     println!("Accuracy : {}", network.accuracy(&x, &y));

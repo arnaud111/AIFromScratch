@@ -3,7 +3,7 @@ use crate::math::vector::{*};
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::fs::File;
-use std::io::Write;
+use std::io::{Read, Write};
 
 #[derive(Serialize, Deserialize)]
 pub struct Network {
@@ -147,5 +147,12 @@ impl Network {
         let mut file = File::create(format!("networks/{}.json", file_name)).unwrap();
         let serialized = serde_json::to_string(self).unwrap();
         file.write_all(serialized.as_bytes()).unwrap();
+    }
+
+    pub fn load(file_name: &str) -> Network {
+        let mut file = File::open(format!("networks/{}.json", file_name)).unwrap();
+        let mut serialized = String::new();
+        file.read_to_string(&mut serialized).unwrap();
+        serde_json::from_str(&serialized).unwrap()
     }
 }
