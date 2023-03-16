@@ -11,11 +11,9 @@ fn main() {
     let (x, y) = create_data();
 
     let mut network = Network::new();
-    network.init_layers(vec![3, 4, 1], x.shape.0 as u16);
-    network.display_layers();
+    network.init_layers(vec![128, 128, 128, 128, 128, 1], x.shape.0 as u16);
     println!("Accuracy : {}", network.accuracy(&x, &y));
-    network.train(&x, &y, 10000, 0.1);
-    network.display_layers();
+    network.train(&x, &y, 10000, 0.1, true);
     println!("Accuracy : {}", network.accuracy(&x, &y));
 }
 

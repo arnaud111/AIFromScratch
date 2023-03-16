@@ -46,7 +46,7 @@ impl Network {
         a
     }
 
-    fn back_propagation(&self, y: &Vector, activations: Vec<Vector>) -> (Vec<Vector>, Vec<Vector>) {
+    fn back_propagation(&self, y: &Vector, activations: &Vec<Vector>) -> (Vec<Vector>, Vec<Vector>) {
         let mut dw: Vec<Vector> = Vec::new();
         let mut db: Vec<Vector> = Vec::new();
         let m = y.shape.1 as f64;
@@ -78,11 +78,26 @@ impl Network {
         }
     }
 
-    pub fn train(&mut self, x: &Vector, y: &Vector, epochs: usize, learning_rate: f64) {
-        for _ in 0..epochs {
+    fn get_accuracy_from_epoch(&self, activations: &Vec<Vector>, y: &Vector) -> f64 {
+        let mut correct = 0;
+
+        for i in 0..y.shape.1 {
+            if (activations[activations.len() - 1].data[0][i] > 0.5) == (y.data[0][i] > 0.5) {
+                correct += 1;
+            }
+        }
+
+        correct as f64 / y.shape.1 as f64
+    }
+
+    pub fn train(&mut self, x: &Vector, y: &Vector, epochs: usize, learning_rate: f64, display: bool) {
+        for i in 0..epochs {
             let activations = self.forward_propagation(x);
-            let (dw, db) = self.back_propagation(y, activations);
+            let (dw, db) = self.back_propagation(y, &activations);
             self.update(dw, db, learning_rate);
+            if display {
+                println!("Epoch: {}, Accuracy: {}", i, self.get_accuracy_from_epoch(&activations, y));
+            }
         }
     }
 
