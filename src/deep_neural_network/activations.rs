@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use crate::math::activations::leaky_relu::{leaky_relu, leaky_relu_derivative};
 use crate::math::activations::relu::{relu, relu_derivative};
 use crate::math::activations::sigmoid::{sigmoid, sigmoid_derivative};
-use crate::math::activations::switch::{switch, switch_derivative};
 use crate::math::activations::tanh::{tanh, tanh_derivative};
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -11,8 +10,7 @@ pub enum ActivationEnum {
     Sigmoid,
     Relu,
     Tanh,
-    LeakyRelu,
-    Switch
+    LeakyRelu
 }
 
 impl ActivationEnum {
@@ -22,8 +20,7 @@ impl ActivationEnum {
             ActivationEnum::Sigmoid => vec.apply(sigmoid),
             ActivationEnum::Relu => vec.apply(relu),
             ActivationEnum::Tanh => vec.apply(tanh),
-            ActivationEnum::LeakyRelu => vec.apply(leaky_relu),
-            ActivationEnum::Switch => vec.apply(switch)
+            ActivationEnum::LeakyRelu => vec.apply(leaky_relu)
         }
     }
 
@@ -32,8 +29,7 @@ impl ActivationEnum {
             ActivationEnum::Sigmoid => vec.apply(sigmoid_derivative),
             ActivationEnum::Relu => vec.apply(relu_derivative),
             ActivationEnum::Tanh => vec.apply(tanh_derivative),
-            ActivationEnum::LeakyRelu => vec.apply(leaky_relu_derivative),
-            ActivationEnum::Switch => vec.apply(switch_derivative)
+            ActivationEnum::LeakyRelu => vec.apply(leaky_relu_derivative)
         }
     }
 }
