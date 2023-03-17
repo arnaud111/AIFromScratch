@@ -1,26 +1,4 @@
-use rand::Rng;
-use rand_distr::{Distribution, Normal};
 use serde::{Deserialize, Serialize};
-
-pub fn create_random_vector(size: &u16) -> Vec<f64> {
-    let mut rng = rand::thread_rng();
-    let distribution = Normal::new(0.0, 1.0).unwrap();
-    let mut vector: Vec<f64> = Vec::new();
-
-    for _ in 0..*size {
-        let num = distribution.sample(&mut rng);
-        vector.push(num);
-    }
-
-    vector
-}
-
-pub fn generate_number() -> f64 {
-    let mut rng = rand::thread_rng();
-    let distribution = Normal::new(0.0, 1.0).unwrap();
-    let num = distribution.sample(&mut rng);
-    num
-}
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Vector {
@@ -180,6 +158,18 @@ impl Vector {
         Vector::new(result)
     }
 
+    pub fn sigmoid_derivative(&self) -> Vector {
+        let mut result: Vec<Vec<f64>> = Vec::new();
+        for i in 0..self.shape.0 {
+            let mut row: Vec<f64> = Vec::new();
+            for j in 0..self.shape.1 {
+                row.push(self.data[i][j] * (1.0 - self.data[i][j]));
+            }
+            result.push(row);
+        }
+        Vector::new(result)
+    }
+
     pub fn tanh(&self) -> Vector {
         let mut result: Vec<Vec<f64>> = Vec::new();
         for i in 0..self.shape.0 {
@@ -237,26 +227,16 @@ impl Vector {
         }
         Vector::new(result)
     }
-}
 
-#[derive(Serialize, Deserialize, Clone)]
-pub enum ActivationEnum {
-    Sigmoid,
-    Relu,
-    Tanh,
-    LeakyRelu,
-    Switch
-}
-
-impl ActivationEnum {
-
-    pub fn compute(&self, vec: Vector) -> Vector {
-        return match self {
-            ActivationEnum::Sigmoid => vec.sigmoid(),
-            ActivationEnum::Relu => vec.relu(),
-            ActivationEnum::Tanh => vec.tanh(),
-            ActivationEnum::LeakyRelu => vec.leaky_relu(),
-            ActivationEnum::Switch => vec.switch()
+    pub fn apply(&self, func: fn(f64) -> f64) -> Vector {
+        let mut result: Vec<Vec<f64>> = Vec::new();
+        for i in 0..self.shape.0 {
+            let mut row: Vec<f64> = Vec::new();
+            for j in 0..self.shape.1 {
+                row.push(func(self.data[i][j]));
+            }
+            result.push(row);
         }
+        Vector::new(result)
     }
 }

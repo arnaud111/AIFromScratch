@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 use std::fs::File;
 use std::io::{Read, Write};
+use crate::ActivationEnum;
 use crate::deep_neural_network::layer::Layer;
 
 #[derive(Serialize, Deserialize)]
@@ -50,7 +51,8 @@ impl Network {
             let db_layer = dz.sum().div_by_number(m);
 
             if i > 0 {
-                dz = self.layers[i].w.transpose().dot(&dz).multiply_one_by_one(&activations[i]).multiply_one_by_one(&activations[i].number_sub(1.0));
+                let da = self.layers[i - 1].activation.derived(&activations[i]);
+                dz = self.layers[i].w.transpose().dot(&dz).multiply_one_by_one(&da);
             }
 
             dw.push(dw_layer);
