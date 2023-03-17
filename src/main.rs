@@ -1,12 +1,15 @@
+use crate::data::dataset_dydx::get_data;
 use crate::deep_neural_network::activations::ActivationEnum;
 use crate::deep_neural_network::network::Network;
 use crate::math::vector::{*};
 
 mod deep_neural_network;
 mod math;
+mod dydx;
+mod data;
 
 fn main() {
-    create_network();
+    get_data();
 }
 
 fn load_network() {
