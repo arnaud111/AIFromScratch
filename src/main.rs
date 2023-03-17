@@ -5,8 +5,6 @@ use crate::math::vector::{*};
 mod deep_neural_network;
 mod math;
 
-
-
 fn main() {
     create_network();
 }
