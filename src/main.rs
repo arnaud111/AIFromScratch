@@ -1,15 +1,12 @@
-use crate::data::dataset_dydx::save_data;
 use crate::deep_neural_network::activations::ActivationEnum;
 use crate::deep_neural_network::network::Network;
 use crate::math::vector::{*};
 
 mod deep_neural_network;
 mod math;
-mod dydx;
-mod data;
 
 fn main() {
-    save_data("ETH-USD-5MINS");
+    load_network();
 }
 
 fn load_network() {
