@@ -9,7 +9,9 @@ mod data;
 
 fn main() {
     let (x, y) = load_dataset_csv("mnist");
-    create_network(x, y);
+    x.display();
+    y.display();
+    //create_network(x, y);
 }
 
 fn load_network() {
