@@ -38,3 +38,19 @@ pub fn load_dataset_csv(file_name: &str) -> (Vector, Vector) {
 
     (Vector::new(x), Vector::new(y))
 }
+
+pub fn convert_y(y: &Vector) -> Vector {
+    let mut y_new = Vec::new();
+    for i in 0..y.shape().1 {
+        let mut row = Vec::new();
+        for j in 0..10 {
+            if y.data[0][i] == j as f64 {
+                row.push(1.0);
+            } else {
+                row.push(0.0);
+            }
+        }
+        y_new.push(row);
+    }
+    Vector::new(y_new)
+}

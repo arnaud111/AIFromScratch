@@ -1,4 +1,4 @@
-use crate::data::dataset::load_dataset_csv;
+use crate::data::dataset::{convert_y, load_dataset_csv};
 use crate::deep_neural_network::activations::ActivationEnum;
 use crate::deep_neural_network::network::Network;
 use crate::math::vector::{*};
@@ -9,9 +9,8 @@ mod data;
 
 fn main() {
     let (x, y) = load_dataset_csv("mnist");
-    x.display();
-    y.display();
-    //create_network(x, y);
+    let y = convert_y(&y);
+    create_network(x, y);
 }
 
 fn load_network() {
