@@ -167,4 +167,17 @@ impl Vector {
         }
         Vector::new(result)
     }
+
+    pub fn sub_vector(&self, start: usize, end: usize) -> Vector {
+        let mut result: Vec<Vec<f64>> = Vec::new();
+        for i in 0..self.shape.0 {
+            result.push(Vec::new());
+        }
+        for i in start..end {
+            for j in 0..self.shape.0 {
+                result[j].push(self.data[j][i]);
+            }
+        }
+        Vector::new(result)
+    }
 }

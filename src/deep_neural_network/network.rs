@@ -76,7 +76,7 @@ impl Network {
         let mut correct = 0;
 
         for i in 0..y.shape.1 {
-            if (activations[activations.len() - 1].data[0][i] > 0.5) == (y.data[0][i] > 0.5) {
+            if self.get_index_max_probability(&activations[activations.len() - 1].get_column(i)) == self.get_index_max_probability(&y.get_column(i)) {
                 correct += 1;
             }
         }
@@ -84,13 +84,16 @@ impl Network {
         correct as f64 / y.shape.1 as f64
     }
 
-    pub fn train(&mut self, x: &Vector, y: &Vector, epochs: usize, learning_rate: f64, display: bool) {
+    pub fn train(&mut self, x: &Vector, y: &Vector, x_test: &Vector, y_test: &Vector, epochs: usize, learning_rate: f64, epochs_interval_test: usize, display: bool) {
         for i in 0..epochs {
             let activations = self.forward_propagation(x);
             let (dw, db) = self.back_propagation(y, &activations);
             self.update(dw, db, learning_rate);
             if display {
-                println!("Epoch: {}, Accuracy: {}", i, self.get_accuracy_from_epoch(&activations, y));
+                println!("Epoch: {}, Train Accuracy: {}", i, self.get_accuracy_from_epoch(&activations, y));
+            }
+            if i % epochs_interval_test == 0 {
+                println!("Test Accuracy : {}", self.accuracy(x_test, y_test));
             }
         }
     }
@@ -110,11 +113,25 @@ impl Network {
         return self.probability(input).data[0][0] > 0.5;
     }
 
+    pub fn get_index_max_probability(&self, output: &Vector) -> usize {
+        let mut max = 0.0;
+        let mut index = 0;
+
+        for i in 0..output.shape.0 {
+            if output.data[i][0] > max {
+                max = output.data[i][0];
+                index = i;
+            }
+        }
+
+        index
+    }
+
     pub fn accuracy(&self, x: &Vector, y: &Vector) -> f64 {
         let mut correct = 0;
 
         for i in 0..x.shape.1 {
-            if self.predict(&x.get_column(i)) == (y.data[0][i] > 0.5) {
+            if self.get_index_max_probability(&self.probability(&x.get_column(i))) == self.get_index_max_probability(&y.get_column(i)) {
                 correct += 1;
             }
         }

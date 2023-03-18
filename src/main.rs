@@ -8,9 +8,15 @@ mod math;
 mod data;
 
 fn main() {
-    let (x, y) = load_dataset_csv("mnist");
-    let y = convert_y(&y);
-    create_network(x, y);
+    let (mut x, mut y) = load_dataset_csv("mnist");
+    y = convert_y(&y);
+    let x_test = x.sub_vector(50000, 60000);
+    let y_test = y.sub_vector(50000, 60000);
+    x = x.sub_vector(0, 30000);
+    y = y.sub_vector(0, 30000);
+    x_test.display();
+    y_test.display();
+    create_network(x, y, x_test, y_test);
 }
 
 fn load_network() {
@@ -19,20 +25,15 @@ fn load_network() {
     println!("Accuracy : {}", network.accuracy(&x, &y));
 }
 
-fn create_network(x: Vector, y: Vector) {
+fn create_network(x: Vector, y: Vector, x_test: Vector, y_test: Vector) {
     let mut network = Network::new();
     let layers = vec![
-        (16384, ActivationEnum::Sigmoid),
-        (128, ActivationEnum::Sigmoid),
-        (128, ActivationEnum::Sigmoid),
-        (128, ActivationEnum::Sigmoid),
-        (128, ActivationEnum::Sigmoid),
         (10, ActivationEnum::Sigmoid)
     ];
     network.init_layers(layers, x.shape.0 as u16);
     println!("Accuracy : {}", network.accuracy(&x, &y));
-    network.train(&x, &y, 1000, 0.1, true);
-    println!("Accuracy : {}", network.accuracy(&x, &y));
+    network.train(&x, &y, &x_test, &y_test, 500, 0.1, 50, true);
+    println!("Accuracy : {}", network.accuracy(&x_test, &y_test));
     network.save("network");
 }
 
