@@ -10,12 +10,10 @@ mod data;
 fn main() {
     let (mut x, mut y) = load_dataset_csv("mnist");
     y = convert_y(&y);
-    let x_test = x.sub_vector(50000, 60000);
-    let y_test = y.sub_vector(50000, 60000);
-    x = x.sub_vector(0, 30000);
-    y = y.sub_vector(0, 30000);
-    x_test.display();
-    y_test.display();
+    let x_test = x.sub_vector(10000, 20000);
+    let y_test = y.sub_vector(10000, 20000);
+    x = x.sub_vector(0, 10000);
+    y = y.sub_vector(0, 10000);
     create_network(x, y, x_test, y_test);
 }
 
@@ -28,10 +26,10 @@ fn load_network() {
 fn create_network(x: Vector, y: Vector, x_test: Vector, y_test: Vector) {
     let mut network = Network::new();
     let layers = vec![
-        (10, ActivationEnum::Sigmoid)
+        (784, ActivationEnum::Sigmoid),
+        (10, ActivationEnum::Softmax),
     ];
     network.init_layers(layers, x.shape.0 as u16);
-    println!("Accuracy : {}", network.accuracy(&x, &y));
     network.train(&x, &y, &x_test, &y_test, 500, 0.1, 50, true);
     println!("Accuracy : {}", network.accuracy(&x_test, &y_test));
     network.save("network");

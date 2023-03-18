@@ -156,6 +156,14 @@ impl Vector {
         Vector::new(result)
     }
 
+    pub fn get_column_as_vec(&self, index: usize) -> Vec<f64> {
+        let mut result: Vec<f64> = Vec::new();
+        for i in 0..self.shape.0 {
+            result.push(self.data[i][index]);
+        }
+        result
+    }
+
     pub fn apply(&self, func: fn(f64) -> f64) -> Vector {
         let mut result: Vec<Vec<f64>> = Vec::new();
         for i in 0..self.shape.0 {
@@ -165,6 +173,21 @@ impl Vector {
             }
             result.push(row);
         }
+        Vector::new(result)
+    }
+
+    pub fn apply_to_vec(&self, func: fn(&Vec<f64>) -> Vec<f64>) -> Vector {
+        let mut result: Vec<Vec<f64>> = Vec::new();
+        for i in 0..self.shape.0 {
+            result.push(vec![]);
+        }
+        for i in 0..self.shape.1 {
+            let vec = func(&self.get_column_as_vec(i));
+            for j in 0..self.shape.0 {
+                result[j].push(vec[j]);
+            }
+        }
+
         Vector::new(result)
     }
 

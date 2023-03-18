@@ -6,6 +6,7 @@ use std::fs::File;
 use std::io::{Read, Write};
 use crate::ActivationEnum;
 use crate::deep_neural_network::layer::Layer;
+use crate::math::activations::log::log;
 
 #[derive(Serialize, Deserialize)]
 pub struct Network {
@@ -33,7 +34,7 @@ impl Network {
 
         for i in 0..self.layers.len() {
             let z = self.layers[i].w.dot(&a[i]).add(&self.layers[i].b);
-            a.push(self.layers[i].activation.compute(z));
+            a.push(self.layers[i].activation.compute(&z));
         }
 
         a
@@ -44,6 +45,7 @@ impl Network {
         let mut db: Vec<Vector> = Vec::new();
         let m = y.shape.1 as f64;
 
+        //let mut dz = activations[activations.len() - 1].apply(log).add(&y.number_sub(1.0).transpose().dot(&y.number_sub(1.0).apply(log)));
         let mut dz = activations[activations.len() - 1].sub(&y);
 
         for i in (0..self.layers.len()).rev() {
@@ -103,7 +105,7 @@ impl Network {
 
         for i in 0..self.layers.len() {
             let z = self.layers[i].w.dot(&a).add(&self.layers[i].b);
-            a = self.layers[i].activation.compute(z);
+            a = self.layers[i].activation.compute(&z);
         }
 
         a
