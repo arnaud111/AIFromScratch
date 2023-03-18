@@ -1,12 +1,15 @@
+use crate::data::dataset::load_dataset_csv;
 use crate::deep_neural_network::activations::ActivationEnum;
 use crate::deep_neural_network::network::Network;
 use crate::math::vector::{*};
 
 mod deep_neural_network;
 mod math;
+mod data;
 
 fn main() {
-    load_network();
+    let (x, y) = load_dataset_csv("mnist");
+    create_network(x, y);
 }
 
 fn load_network() {
@@ -15,16 +18,15 @@ fn load_network() {
     println!("Accuracy : {}", network.accuracy(&x, &y));
 }
 
-fn create_network() {
-    let (x, y) = create_data();
+fn create_network(x: Vector, y: Vector) {
     let mut network = Network::new();
     let layers = vec![
+        (16384, ActivationEnum::Sigmoid),
         (128, ActivationEnum::Sigmoid),
         (128, ActivationEnum::Sigmoid),
         (128, ActivationEnum::Sigmoid),
         (128, ActivationEnum::Sigmoid),
-        (128, ActivationEnum::Sigmoid),
-        (1, ActivationEnum::Sigmoid)
+        (10, ActivationEnum::Sigmoid)
     ];
     network.init_layers(layers, x.shape.0 as u16);
     println!("Accuracy : {}", network.accuracy(&x, &y));
