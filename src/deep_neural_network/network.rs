@@ -45,7 +45,6 @@ impl Network {
         let mut db: Vec<Vector> = Vec::new();
         let m = y.shape.1 as f64;
 
-        //let mut dz = activations[activations.len() - 1].apply(log).add(&y.number_sub(1.0).transpose().dot(&y.number_sub(1.0).apply(log)));
         let mut dz = activations[activations.len() - 1].sub(&y);
 
         for i in (0..self.layers.len()).rev() {
