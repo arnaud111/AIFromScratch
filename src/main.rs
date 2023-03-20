@@ -14,7 +14,7 @@ mod math;
 mod data;
 
 fn main() {
-    launch_add_cuda().expect("failed to launch cuda");
+    launch_matrix_multiply_cuda().expect("failed to launch cuda");
     /*
     let (mut x, mut y) = load_dataset_csv("mnist");
     y = convert_y(&y);
@@ -80,6 +80,52 @@ fn launch_add_cuda() -> Result<(), Box<dyn Error>> {
     out_1.copy_to(&mut out_host[0..10])?;
 
     for x in out_host.iter() {
+        println!("x : {}", x);
+    }
+
+    println!("Launched kernel successfully.");
+    Ok(())
+}
+
+fn launch_matrix_multiply_cuda() -> Result<(), Box<dyn Error>> {
+    // Set up the context, load the module, and create a stream to run kernels in.
+    rustacuda::init(CudaFlags::empty())?;
+    let device = Device::get_device(0)?;
+    let _ctx = Context::create_and_push(ContextFlags::MAP_HOST | ContextFlags::SCHED_AUTO, device)?;
+
+    let ptx = CString::new(include_str!("../resources/dot.ptx"))?;
+    let module = Module::load_from_string(&ptx)?;
+    let stream = Stream::new(StreamFlags::NON_BLOCKING, None)?;
+
+    // Create buffers for data
+    let N = 4;
+    let mut A = DeviceBuffer::from_slice(&[1.0f32, 2.0f32, 3.0f32, 4.0f32, 5.0f32, 6.0f32, 7.0f32, 8.0f32, 9.0f32, 10.0f32, 11.0f32, 12.0f32, 13.0f32, 14.0f32, 15.0f32, 16.0f32])?;
+    let mut B = DeviceBuffer::from_slice(&[2.0f32; 16])?;
+    let mut C = DeviceBuffer::from_slice(&[0.0f32; 16])?;
+
+    // This kernel multiplies two matrices `A` and `B` and writes the result into `C`.
+    unsafe {
+        // Launch the kernel with one block of size (N, N) on `stream`.
+        let block_dim = (N, N, 1);
+        let grid_dim = ((N + block_dim.0 - 1) / block_dim.0, (N + block_dim.1 - 1) / block_dim.1, 1);
+        let result = launch!(module.dot<<<grid_dim, block_dim, 0, stream>>>(
+            A.as_device_ptr(),
+            B.as_device_ptr(),
+            C.as_device_ptr(),
+            N
+        ));
+        result?;
+        println!("C : {:?}", C);
+    }
+
+    // Kernel launches are asynchronous, so we wait for the kernels to finish executing.
+    stream.synchronize()?;
+
+    // Copy the results back to host memory
+    let mut C_host = [0.0f32; 16];
+    C.copy_to(&mut C_host[0..16])?;
+
+    for x in C_host.iter() {
         println!("x : {}", x);
     }
 
