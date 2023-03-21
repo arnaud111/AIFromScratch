@@ -24,6 +24,26 @@ impl Vector {
         println!("{:?} : {:?}", self.shape, self.data);
     }
 
+    fn from_slice(slice: &[f64], x: usize, y: usize) -> Vector {
+        let mut data: Vec<Vec<f64>> = Vec::new();
+        for i in 0..x {
+            let mut row: Vec<f64> = Vec::new();
+            for j in 0..y {
+                row.push(slice[i * y + j]);
+            }
+            data.push(row);
+        }
+        Vector::new(data)
+    }
+
+    fn to_slice(&self) -> Vec<f64> {
+        let mut slice: Vec<f64> = Vec::new();
+        for i in 0..self.shape.0 {
+            slice.push(self.data[i][0]);
+        }
+        slice
+    }
+
     pub fn transpose(&self) -> Vector {
         let mut transposed: Vec<Vec<f64>> = Vec::new();
         for i in 0..self.shape.1 {
