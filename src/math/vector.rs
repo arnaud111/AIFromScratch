@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use crate::launch_matrix_multiply_cuda;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Vector {
@@ -24,24 +25,38 @@ impl Vector {
         println!("{:?} : {:?}", self.shape, self.data);
     }
 
-    fn from_slice(slice: &[f64], x: usize, y: usize) -> Vector {
+    pub fn from_slice(slice: Vec<f32>, x: usize, y: usize) -> Vector {
         let mut data: Vec<Vec<f64>> = Vec::new();
         for i in 0..x {
             let mut row: Vec<f64> = Vec::new();
             for j in 0..y {
-                row.push(slice[i * y + j]);
+                row.push(slice[i * y + j] as f64);
             }
             data.push(row);
         }
         Vector::new(data)
     }
 
-    fn to_slice(&self) -> Vec<f64> {
-        let mut slice: Vec<f64> = Vec::new();
-        for i in 0..self.shape.0 {
-            slice.push(self.data[i][0]);
+    pub fn from_shape(shape: (u32, u32)) -> Vector {
+        let mut data: Vec<Vec<f64>> = Vec::new();
+        for i in 0..shape.0 {
+            let mut row: Vec<f64> = Vec::new();
+            for j in 0..shape.1 {
+                row.push(0.0);
+            }
+            data.push(row);
         }
-        slice
+        Vector::new(data)
+    }
+
+    pub fn to_vec_f32(&self) -> Vec<f32> {
+        let mut vec: Vec<f32> = Vec::new();
+        for i in 0..self.shape.0 {
+            for j in 0..self.shape.1 {
+                vec.push(self.data[i][j] as f32);
+            }
+        }
+        vec
     }
 
     pub fn transpose(&self) -> Vector {
@@ -70,6 +85,11 @@ impl Vector {
             result.push(row);
         }
         Vector::new(result)
+    }
+
+    pub fn dot_cuda(&self, other: &Vector) -> Vector {
+        let result = launch_matrix_multiply_cuda(self.to_vec_f32().as_slice(), other.to_vec_f32().as_slice(), self.shape, other.shape).expect("failed to launch cuda");
+        Vector::from_slice(result, self.shape.0, other.shape.1)
     }
 
     pub fn add(&self, other: &Vector) -> Vector {
