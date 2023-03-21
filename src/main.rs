@@ -98,21 +98,26 @@ fn launch_matrix_multiply_cuda() -> Result<(), Box<dyn Error>> {
     let stream = Stream::new(StreamFlags::NON_BLOCKING, None)?;
 
     // Create buffers for data
-    let N = 4;
-    let mut A = DeviceBuffer::from_slice(&[1.0f32, 2.0f32, 3.0f32, 4.0f32, 5.0f32, 6.0f32, 7.0f32, 8.0f32, 9.0f32, 10.0f32, 11.0f32, 12.0f32, 13.0f32, 14.0f32, 15.0f32, 16.0f32])?;
-    let mut B = DeviceBuffer::from_slice(&[2.0f32; 16])?;
-    let mut C = DeviceBuffer::from_slice(&[0.0f32; 16])?;
+    let rows_a = 3;
+    let cols_a = 4;
+    let rows_b = 4;
+    let cols_b = 2;
+    let mut A = DeviceBuffer::from_slice(&[1.0f32; 12])?;
+    let mut B = DeviceBuffer::from_slice(&[2.0f32; 8])?;
+    let mut C = DeviceBuffer::from_slice(&[0.0f32; 6])?;
 
     // This kernel multiplies two matrices `A` and `B` and writes the result into `C`.
     unsafe {
-        // Launch the kernel with one block of size (N, N) on `stream`.
-        let block_dim = (N, N, 1);
-        let grid_dim = ((N + block_dim.0 - 1) / block_dim.0, (N + block_dim.1 - 1) / block_dim.1, 1);
+        // Launch the kernel with one block of size (cols_b, rows_a) on `stream`.
+        let block_dim = (cols_b, rows_a, 1);
+        let grid_dim = ((cols_b + block_dim.0 - 1) / block_dim.0, (rows_a + block_dim.1 - 1) / block_dim.1, 1);
         let result = launch!(module.dot<<<grid_dim, block_dim, 0, stream>>>(
             A.as_device_ptr(),
             B.as_device_ptr(),
             C.as_device_ptr(),
-            N
+            rows_a,
+            cols_a,
+            cols_b
         ));
         result?;
         println!("C : {:?}", C);
@@ -122,8 +127,8 @@ fn launch_matrix_multiply_cuda() -> Result<(), Box<dyn Error>> {
     stream.synchronize()?;
 
     // Copy the results back to host memory
-    let mut C_host = [0.0f32; 16];
-    C.copy_to(&mut C_host[0..16])?;
+    let mut C_host = vec![0.0f32; 6];
+    C.copy_to(&mut C_host[..])?;
 
     for x in C_host.iter() {
         println!("x : {}", x);
