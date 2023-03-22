@@ -20,8 +20,8 @@ fn main() {
     y = convert_y(&y);
     let x_test = x.sub_vector(5000, 6000);
     let y_test = y.sub_vector(5000, 6000);
-    x = x.sub_vector(0, 10000);
-    y = y.sub_vector(0, 10000);
+    x = x.sub_vector(0, 50000);
+    y = y.sub_vector(0, 50000);
     create_network(x, y, x_test, y_test);
 }
 
