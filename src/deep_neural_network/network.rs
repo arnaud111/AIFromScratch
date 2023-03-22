@@ -33,7 +33,7 @@ impl Network {
         a.push((*input).clone());
 
         for i in 0..self.layers.len() {
-            let z = self.layers[i].w.dot(&a[i]).add(&self.layers[i].b);
+            let z = self.layers[i].w.dot_cuda(&a[i]).add(&self.layers[i].b);
             a.push(self.layers[i].activation.compute(&z));
         }
 
@@ -43,17 +43,17 @@ impl Network {
     fn back_propagation(&self, y: &Vector, activations: &Vec<Vector>) -> (Vec<Vector>, Vec<Vector>) {
         let mut dw: Vec<Vector> = Vec::new();
         let mut db: Vec<Vector> = Vec::new();
-        let m = y.shape.1 as f64;
+        let m = y.shape.1 as f32;
 
         let mut dz = activations[activations.len() - 1].sub(&y);
 
         for i in (0..self.layers.len()).rev() {
-            let dw_layer = dz.dot(&activations[i].transpose()).div_by_number(m);
+            let dw_layer = dz.dot_cuda(&activations[i].transpose()).div_by_number(m);
             let db_layer = dz.sum().div_by_number(m);
 
             if i > 0 {
                 let da = self.layers[i - 1].activation.derived(&activations[i]);
-                dz = self.layers[i].w.transpose().dot(&dz).multiply_one_by_one(&da);
+                dz = self.layers[i].w.transpose().dot_cuda(&dz).multiply_one_by_one(&da);
             }
 
             dw.push(dw_layer);
@@ -66,14 +66,14 @@ impl Network {
         (dw, db)
     }
 
-    fn update(&mut self, dw: Vec<Vector>, db: Vec<Vector>, learning_rate: f64) {
+    fn update(&mut self, dw: Vec<Vector>, db: Vec<Vector>, learning_rate: f32) {
         for i in 0..self.layers.len() {
             self.layers[i].w = self.layers[i].w.sub(&dw[i].mul_by_number(learning_rate));
             self.layers[i].b = self.layers[i].b.sub(&db[i].mul_by_number(learning_rate));
         }
     }
 
-    fn get_accuracy_from_epoch(&self, activations: &Vec<Vector>, y: &Vector) -> f64 {
+    fn get_accuracy_from_epoch(&self, activations: &Vec<Vector>, y: &Vector) -> f32 {
         let mut correct = 0;
 
         for i in 0..y.shape.1 {
@@ -82,10 +82,10 @@ impl Network {
             }
         }
 
-        correct as f64 / y.shape.1 as f64
+        correct as f32 / y.shape.1 as f32
     }
 
-    pub fn train(&mut self, x: &Vector, y: &Vector, x_test: &Vector, y_test: &Vector, epochs: usize, learning_rate: f64, epochs_interval_test: usize, display: bool) {
+    pub fn train(&mut self, x: &Vector, y: &Vector, x_test: &Vector, y_test: &Vector, epochs: usize, learning_rate: f32, epochs_interval_test: usize, display: bool) {
         for i in 0..epochs {
             let activations = self.forward_propagation(x);
             let (dw, db) = self.back_propagation(y, &activations);
@@ -93,7 +93,7 @@ impl Network {
             if display {
                 println!("Epoch: {}, Train Accuracy: {}", i, self.get_accuracy_from_epoch(&activations, y));
             }
-            if i % epochs_interval_test == 0 {
+            if (i + 1) % epochs_interval_test == 0 {
                 println!("Test Accuracy : {}", self.accuracy(x_test, y_test));
             }
         }
@@ -103,7 +103,7 @@ impl Network {
         let mut a: Vector = (*input).clone();
 
         for i in 0..self.layers.len() {
-            let z = self.layers[i].w.dot(&a).add(&self.layers[i].b);
+            let z = self.layers[i].w.dot_cuda(&a).add(&self.layers[i].b);
             a = self.layers[i].activation.compute(&z);
         }
 
@@ -128,7 +128,7 @@ impl Network {
         index
     }
 
-    pub fn accuracy(&self, x: &Vector, y: &Vector) -> f64 {
+    pub fn accuracy(&self, x: &Vector, y: &Vector) -> f32 {
         let mut correct = 0;
 
         for i in 0..x.shape.1 {
@@ -137,7 +137,7 @@ impl Network {
             }
         }
 
-        correct as f64 / y.shape.1 as f64
+        correct as f32 / y.shape.1 as f32
     }
 
     pub fn display_layers(&self) {

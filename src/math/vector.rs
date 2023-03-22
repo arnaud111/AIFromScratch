@@ -3,7 +3,7 @@ use crate::launch_matrix_multiply_cuda;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Vector {
-    pub data: Vec<Vec<f64>>,
+    pub data: Vec<Vec<f32>>,
     pub shape: (usize, usize)
 }
 
@@ -13,7 +13,7 @@ impl Vector {
         self.shape
     }
 
-    pub fn new(data: Vec<Vec<f64>>) -> Vector {
+    pub fn new(data: Vec<Vec<f32>>) -> Vector {
         let shape = (data.len(), data[0].len());
         Vector {
             data,
@@ -26,11 +26,11 @@ impl Vector {
     }
 
     pub fn from_slice(slice: Vec<f32>, x: usize, y: usize) -> Vector {
-        let mut data: Vec<Vec<f64>> = Vec::new();
+        let mut data: Vec<Vec<f32>> = Vec::new();
         for i in 0..x {
-            let mut row: Vec<f64> = Vec::new();
+            let mut row: Vec<f32> = Vec::new();
             for j in 0..y {
-                row.push(slice[i * y + j] as f64);
+                row.push(slice[i * y + j] as f32);
             }
             data.push(row);
         }
@@ -38,9 +38,9 @@ impl Vector {
     }
 
     pub fn from_shape(shape: (u32, u32)) -> Vector {
-        let mut data: Vec<Vec<f64>> = Vec::new();
+        let mut data: Vec<Vec<f32>> = Vec::new();
         for i in 0..shape.0 {
-            let mut row: Vec<f64> = Vec::new();
+            let mut row: Vec<f32> = Vec::new();
             for j in 0..shape.1 {
                 row.push(0.0);
             }
@@ -60,9 +60,9 @@ impl Vector {
     }
 
     pub fn transpose(&self) -> Vector {
-        let mut transposed: Vec<Vec<f64>> = Vec::new();
+        let mut transposed: Vec<Vec<f32>> = Vec::new();
         for i in 0..self.shape.1 {
-            let mut row: Vec<f64> = Vec::new();
+            let mut row: Vec<f32> = Vec::new();
             for j in 0..self.shape.0 {
                 row.push(self.data[j][i]);
             }
@@ -72,9 +72,9 @@ impl Vector {
     }
 
     pub fn dot(&self, other: &Vector) -> Vector {
-        let mut result: Vec<Vec<f64>> = Vec::new();
+        let mut result: Vec<Vec<f32>> = Vec::new();
         for i in 0..self.shape.0 {
-            let mut row: Vec<f64> = Vec::new();
+            let mut row: Vec<f32> = Vec::new();
             for j in 0..other.shape.1 {
                 let mut sum = 0.0;
                 for k in 0..self.shape.1 {
@@ -88,14 +88,16 @@ impl Vector {
     }
 
     pub fn dot_cuda(&self, other: &Vector) -> Vector {
+        // self.display();
+        // other.display();
         let result = launch_matrix_multiply_cuda(self.to_vec_f32().as_slice(), other.to_vec_f32().as_slice(), self.shape, other.shape).expect("failed to launch cuda");
         Vector::from_slice(result, self.shape.0, other.shape.1)
     }
 
     pub fn add(&self, other: &Vector) -> Vector {
-        let mut result: Vec<Vec<f64>> = Vec::new();
+        let mut result: Vec<Vec<f32>> = Vec::new();
         for i in 0..self.shape.0 {
-            let mut row: Vec<f64> = Vec::new();
+            let mut row: Vec<f32> = Vec::new();
             for j in 0..self.shape.1 {
                 if other.shape.1 == 1 {
                     row.push(self.data[i][j] + other.data[i][0])
@@ -109,9 +111,9 @@ impl Vector {
     }
 
     pub fn sub(&self, other: &Vector) -> Vector {
-        let mut result: Vec<Vec<f64>> = Vec::new();
+        let mut result: Vec<Vec<f32>> = Vec::new();
         for i in 0..self.shape.0 {
-            let mut row: Vec<f64> = Vec::new();
+            let mut row: Vec<f32> = Vec::new();
             for j in 0..self.shape.1 {
                 if other.shape.1 == 1 {
                     row.push(self.data[i][j] - other.data[i][0])
@@ -124,10 +126,10 @@ impl Vector {
         Vector::new(result)
     }
 
-    pub fn number_sub(&self, n: f64) -> Vector {
-        let mut result: Vec<Vec<f64>> = Vec::new();
+    pub fn number_sub(&self, n: f32) -> Vector {
+        let mut result: Vec<Vec<f32>> = Vec::new();
         for i in 0..self.shape.0 {
-            let mut row: Vec<f64> = Vec::new();
+            let mut row: Vec<f32> = Vec::new();
             for j in 0..self.shape.1 {
                 row.push(n - self.data[i][j]);
             }
@@ -136,10 +138,10 @@ impl Vector {
         Vector::new(result)
     }
 
-    pub fn div_by_number(&self, n: f64) -> Vector {
-        let mut result: Vec<Vec<f64>> = Vec::new();
+    pub fn div_by_number(&self, n: f32) -> Vector {
+        let mut result: Vec<Vec<f32>> = Vec::new();
         for i in 0..self.shape.0 {
-            let mut row: Vec<f64> = Vec::new();
+            let mut row: Vec<f32> = Vec::new();
             for j in 0..self.shape.1 {
                 row.push(self.data[i][j] / n);
             }
@@ -148,10 +150,10 @@ impl Vector {
         Vector::new(result)
     }
 
-    pub fn mul_by_number(&self, n: f64) -> Vector {
-        let mut result: Vec<Vec<f64>> = Vec::new();
+    pub fn mul_by_number(&self, n: f32) -> Vector {
+        let mut result: Vec<Vec<f32>> = Vec::new();
         for i in 0..self.shape.0 {
-            let mut row: Vec<f64> = Vec::new();
+            let mut row: Vec<f32> = Vec::new();
             for j in 0..self.shape.1 {
                 row.push(self.data[i][j] * n);
             }
@@ -161,9 +163,9 @@ impl Vector {
     }
 
     pub fn sum(&self) -> Vector {
-        let mut result: Vec<Vec<f64>> = Vec::new();
+        let mut result: Vec<Vec<f32>> = Vec::new();
         for i in 0..self.shape.0 {
-            let mut row: Vec<f64> = Vec::new();
+            let mut row: Vec<f32> = Vec::new();
             let mut sum = 0.0;
             for j in 0..self.shape.1 {
                 sum += self.data[i][j];
@@ -175,9 +177,9 @@ impl Vector {
     }
 
     pub fn multiply_one_by_one(&self, other: &Vector) -> Vector {
-        let mut result: Vec<Vec<f64>> = Vec::new();
+        let mut result: Vec<Vec<f32>> = Vec::new();
         for i in 0..self.shape.0 {
-            let mut row: Vec<f64> = Vec::new();
+            let mut row: Vec<f32> = Vec::new();
             for j in 0..self.shape.1 {
                 row.push(self.data[i][j] * other.data[i][j]);
             }
@@ -187,27 +189,27 @@ impl Vector {
     }
 
     pub fn get_column(&self, index: usize) -> Vector {
-        let mut result: Vec<Vec<f64>> = Vec::new();
+        let mut result: Vec<Vec<f32>> = Vec::new();
         for i in 0..self.shape.0 {
-            let mut row: Vec<f64> = Vec::new();
+            let mut row: Vec<f32> = Vec::new();
             row.push(self.data[i][index]);
             result.push(row);
         }
         Vector::new(result)
     }
 
-    pub fn get_column_as_vec(&self, index: usize) -> Vec<f64> {
-        let mut result: Vec<f64> = Vec::new();
+    pub fn get_column_as_vec(&self, index: usize) -> Vec<f32> {
+        let mut result: Vec<f32> = Vec::new();
         for i in 0..self.shape.0 {
             result.push(self.data[i][index]);
         }
         result
     }
 
-    pub fn apply(&self, func: fn(f64) -> f64) -> Vector {
-        let mut result: Vec<Vec<f64>> = Vec::new();
+    pub fn apply(&self, func: fn(f32) -> f32) -> Vector {
+        let mut result: Vec<Vec<f32>> = Vec::new();
         for i in 0..self.shape.0 {
-            let mut row: Vec<f64> = Vec::new();
+            let mut row: Vec<f32> = Vec::new();
             for j in 0..self.shape.1 {
                 row.push(func(self.data[i][j]));
             }
@@ -216,8 +218,8 @@ impl Vector {
         Vector::new(result)
     }
 
-    pub fn apply_to_vec(&self, func: fn(&Vec<f64>) -> Vec<f64>) -> Vector {
-        let mut result: Vec<Vec<f64>> = Vec::new();
+    pub fn apply_to_vec(&self, func: fn(&Vec<f32>) -> Vec<f32>) -> Vector {
+        let mut result: Vec<Vec<f32>> = Vec::new();
         for i in 0..self.shape.0 {
             result.push(vec![]);
         }
@@ -232,7 +234,7 @@ impl Vector {
     }
 
     pub fn sub_vector(&self, start: usize, end: usize) -> Vector {
-        let mut result: Vec<Vec<f64>> = Vec::new();
+        let mut result: Vec<Vec<f32>> = Vec::new();
         for i in 0..self.shape.0 {
             result.push(Vec::new());
         }

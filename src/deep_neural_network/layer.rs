@@ -14,8 +14,8 @@ pub struct Layer {
 impl Layer {
 
     pub fn new(input: &u16, neurons_count: &u16, activation: &ActivationEnum) -> Layer {
-        let mut w_layer: Vec<Vec<f64>> = Vec::new();
-        let mut b_layer: Vec<Vec<f64>> = Vec::new();
+        let mut w_layer: Vec<Vec<f32>> = Vec::new();
+        let mut b_layer: Vec<Vec<f32>> = Vec::new();
 
         for _ in 0..*neurons_count {
             w_layer.push(Layer::create_random_vec(input));
@@ -29,10 +29,10 @@ impl Layer {
         }
     }
 
-    fn create_random_vec(size: &u16) -> Vec<f64> {
+    fn create_random_vec(size: &u16) -> Vec<f32> {
         let mut rng = rand::thread_rng();
         let distribution = Normal::new(0.0, 1.0).unwrap();
-        let mut vector: Vec<f64> = Vec::new();
+        let mut vector: Vec<f32> = Vec::new();
 
         for _ in 0..*size {
             let num = distribution.sample(&mut rng);

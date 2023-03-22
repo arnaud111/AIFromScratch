@@ -1,4 +1,4 @@
 
-pub fn log(x: f64) -> f64 {
+pub fn log(x: f32) -> f32 {
     x.log10()
 }

@@ -1,5 +1,5 @@
 
-pub fn relu(x: f64) -> f64 {
+pub fn relu(x: f32) -> f32 {
     if x < 0.0 {
         0.0
     } else {
@@ -7,7 +7,7 @@ pub fn relu(x: f64) -> f64 {
     }
 }
 
-pub fn relu_derivative(x: f64) -> f64 {
+pub fn relu_derivative(x: f32) -> f32 {
     if x < 0.0 {
         0.0
     } else {

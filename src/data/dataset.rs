@@ -26,10 +26,10 @@ pub fn load_dataset_csv(file_name: &str) -> (Vector, Vector) {
             let mut y_index = 0;
             for i in 0..split.len() {
                 if target_index.contains(&i) {
-                    y[y_index].push(split[i].parse::<f64>().unwrap());
+                    y[y_index].push(split[i].parse::<f32>().unwrap());
                     y_index += 1;
                 } else {
-                    x[x_index].push(split[i].parse::<f64>().unwrap());
+                    x[x_index].push(split[i].parse::<f32>().unwrap());
                     x_index += 1;
                 }
             }
@@ -46,7 +46,7 @@ pub fn convert_y(y: &Vector) -> Vector {
     }
     for i in 0..y.shape().1 {
         for j in 0..10 {
-            if y.data[0][i] == j as f64 {
+            if y.data[0][i] == j as f32 {
                 y_new[j].push(1.0);
             } else {
                 y_new[j].push(0.0);
