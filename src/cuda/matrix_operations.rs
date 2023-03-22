@@ -1,6 +1,7 @@
 use rustacuda::prelude::*;
 use std::error::Error;
 use std::ffi::CString;
+use rand_distr::num_traits::real::Real;
 use crate::Vector;
 
 pub fn launch_matrix_multiply_cuda(a: &[f32], b: &[f32], shape_a: (usize, usize), shape_b: (usize, usize)) -> Result<Vec<f32>, Box<dyn Error>> {
@@ -20,8 +21,7 @@ pub fn launch_matrix_multiply_cuda(a: &[f32], b: &[f32], shape_a: (usize, usize)
     let mut B = DeviceBuffer::from_slice(b).expect("Failed to create device buffer");
     let mut result = Vec::new();
 
-    for i in 0..4 {
-
+    for i in 0..(rows_a * cols_b / 10000) + 1 {
         let mut C = DeviceBuffer::from_slice(&[0.0; 10000]).expect("Failed to create device buffer");
 
         unsafe {

@@ -16,19 +16,13 @@ mod data;
 mod cuda;
 
 fn main() {
-    let mut a = Vector::new(vec![vec![1.0, 2.0], vec![1.0, 2.0], vec![1.0, 2.0]]);
-    let mut b = Vector::new(vec![vec![1.0, 2.0, 3.0], vec![1.0, 2.0, 3.0]]);
-    let mut a = Vector::new(vec![vec![1.0; 1]; 200]);
-    let mut b = Vector::new(vec![vec![2.0; 200]; 1]);
-    a.dot_cuda(&b).display();
-/*
     let (mut x, mut y) = load_dataset_csv("mnist");
     y = convert_y(&y);
     let x_test = x.sub_vector(5000, 6000);
     let y_test = y.sub_vector(5000, 6000);
-    x = x.sub_vector(0, 100);
-    y = y.sub_vector(0, 100);
-    create_network(x, y, x_test, y_test);*/
+    x = x.sub_vector(0, 10000);
+    y = y.sub_vector(0, 10000);
+    create_network(x, y, x_test, y_test);
 }
 
 fn load_network(x: Vector, y: Vector, x_test: Vector, y_test: Vector) {
