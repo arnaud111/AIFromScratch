@@ -33,7 +33,7 @@ impl Network {
         a.push((*input).clone());
 
         for i in 0..self.layers.len() {
-            let z = self.layers[i].w.dot_cuda(&a[i]).add(&self.layers[i].b);
+            let z = self.layers[i].w.dot(&a[i]).add(&self.layers[i].b);
             a.push(self.layers[i].activation.compute(&z));
         }
 
@@ -48,12 +48,12 @@ impl Network {
         let mut dz = activations[activations.len() - 1].sub(&y);
 
         for i in (0..self.layers.len()).rev() {
-            let dw_layer = dz.dot_cuda(&activations[i].transpose()).div_by_number(m);
+            let dw_layer = dz.dot(&activations[i].transpose()).div_by_number(m);
             let db_layer = dz.sum().div_by_number(m);
 
             if i > 0 {
                 let da = self.layers[i - 1].activation.derived(&activations[i]);
-                dz = self.layers[i].w.transpose().dot_cuda(&dz).multiply_one_by_one(&da);
+                dz = self.layers[i].w.transpose().dot(&dz).multiply_one_by_one(&da);
             }
 
             dw.push(dw_layer);
@@ -86,6 +86,10 @@ impl Network {
     }
 
     pub fn train(&mut self, x: &Vector, y: &Vector, x_test: &Vector, y_test: &Vector, epochs: usize, learning_rate: f32, epochs_interval_test: usize, display: bool) {
+
+        println!("{:?}", x.shape);
+        println!("{:?}", y.shape);
+        panic!();
         for i in 0..epochs {
             let activations = self.forward_propagation(x);
             let (dw, db) = self.back_propagation(y, &activations);
@@ -103,7 +107,7 @@ impl Network {
         let mut a: Vector = (*input).clone();
 
         for i in 0..self.layers.len() {
-            let z = self.layers[i].w.dot_cuda(&a).add(&self.layers[i].b);
+            let z = self.layers[i].w.dot(&a).add(&self.layers[i].b);
             a = self.layers[i].activation.compute(&z);
         }
 
